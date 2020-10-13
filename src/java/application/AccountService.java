@@ -18,9 +18,10 @@ public class AccountService {
    
     
     public User login(String username, String password){
-        userList.add(new User("abe","password"));
-        userList.add(new User("barb","password"));
-        
+        if(userList.size() == 0){
+            userList.add(new User("abe","password"));
+            userList.add(new User("barb","password"));
+        }
         for(User x : userList){
             if (x.getUsername().equals(username) && x.getPassword().equals(password)){
                 return new User(x.getUsername(), null);

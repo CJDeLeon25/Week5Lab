@@ -6,6 +6,7 @@ package servlets;
  * and open the template in the editor.
  */
 
+import application.AccountService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -29,8 +30,12 @@ public class LoginServlet extends HttpServlet {
             session.invalidate();
             session = request.getSession();
             }
-        
-        getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+        if(session.getAttribute("username") != null){
+            response.sendRedirect("home");
+        }
+        else{
+            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+        }
     }
 
 
@@ -41,12 +46,23 @@ public class LoginServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         if(username != null && password != null){
-            
+            AccountService service = new AccountService();
+            if(service.login(username,password) != null){
+                session.setAttribute("username", username);
+                response.sendRedirect("home");
+            }
+            else{
+               request.setAttribute("username",username);
+               request.setAttribute("password",password);
+               getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+            }
         }
-        
-        
-        getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+        else{
+            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
 
+        }
+      
+        
     }
 
     /**
